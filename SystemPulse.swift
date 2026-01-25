@@ -426,6 +426,7 @@ class Metrics {
 
     var gpu: Double = 0, gpuName: String = "", gpuTemp: Double = 0
     var gpuHistory: [Double] = []
+    var displayRefreshRate: Int = 0
 
     var netIn: Double = 0, netOut: Double = 0
     var netTotalIn: UInt64 = 0, netTotalOut: UInt64 = 0
@@ -607,6 +608,18 @@ class Monitor {
                let gpuUtil = perfStats["Device Utilization %"] as? Int { metrics.gpu = Double(gpuUtil) }
             IOObjectRelease(service); service = IOIteratorNext(iterator)
         }
+
+        // Get display refresh rate
+        if let mode = CGDisplayCopyDisplayMode(CGMainDisplayID()) {
+            let refreshRate = mode.refreshRate
+            // ProMotion displays report 0 for variable refresh - check nominal rate
+            if refreshRate > 0 {
+                metrics.displayRefreshRate = Int(refreshRate)
+            } else {
+                // For ProMotion displays, assume max refresh rate (typically 120Hz)
+                metrics.displayRefreshRate = 120
+            }
+        }
     }
 
     private func updateSensors() {
@@ -757,6 +770,10 @@ class ContentView: NSView {
         String(format: "%.0f%%", m.gpu).draw(at: NSPoint(x: pad + 14, y: y + gpuH - 36), withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 26, weight: .bold), .foregroundColor: Theme.gpu])
         L10n.gpu.draw(at: NSPoint(x: pad + 14, y: y + gpuH - 52), withAttributes: [.font: NSFont.systemFont(ofSize: 11, weight: .semibold), .foregroundColor: Theme.text2])
         m.gpuName.replacingOccurrences(of: "Apple ", with: "").draw(at: NSPoint(x: pad + 14, y: y + 16), withAttributes: [.font: NSFont.systemFont(ofSize: 11, weight: .medium), .foregroundColor: Theme.text2])
+        // Display refresh rate
+        if m.displayRefreshRate > 0 {
+            "\(m.displayRefreshRate) Hz".draw(at: NSPoint(x: pad + 14, y: y + 2), withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 10, weight: .medium), .foregroundColor: Theme.text3])
+        }
         if m.gpuTemp > 0 {
             let gt = m.gpuTemp > 85 ? Theme.danger : (m.gpuTemp > 70 ? Theme.warning : Theme.temp)
             gt.withAlphaComponent(0.15).setFill()
@@ -1136,10 +1153,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func updateMenuBarDisplay() {
         let m = monitor.metrics
 
-        // Update menu bar with mini icons (using SF Symbols text representation)
+        // Update menu bar text display
         if Settings.shared.showMenuBarDetails {
-            // Using simple characters that work well in menu bar
-            var menuText = " ▪︎\(Int(m.cpu))% ◦\(Int(m.mem))%"
+            var menuText = " C:\(Int(m.cpu))% M:\(Int(m.mem))%"
             if m.cpuTemp > 0 { menuText += " \(Int(m.cpuTemp))°" }
             statusItem.button?.title = menuText
         } else {

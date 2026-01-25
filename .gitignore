@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Build artifacts
+build/
+*.o
+*.swiftmodule
+*.swiftdoc
+
+# Compiled binary (build locally)
+SystemPulse
+*.app/
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Sensitive files
+*.pem
+*.key
+*.env
+.env.*
+credentials.*
+secrets.*

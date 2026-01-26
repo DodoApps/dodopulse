@@ -35,7 +35,22 @@ A lightweight, native macOS menu bar app that displays real-time system metrics 
 
 ## Installation
 
-### Option 1: Build from source
+### Option 1: Homebrew (recommended)
+
+```bash
+brew tap bluewave-labs/systempulse
+brew install --cask systempulse
+```
+
+> **Note:** SystemPulse is not notarized. On first launch, right-click the app → Open → confirm. Or run: `xattr -cr /Applications/SystemPulse.app`
+
+### Option 2: Download DMG
+
+1. Download the latest DMG from [Releases](https://github.com/bluewave-labs/systempulse/releases)
+2. Open the DMG and drag SystemPulse to Applications
+3. On first launch, right-click → Open → confirm
+
+### Option 3: Build from source
 
 1. Clone the repository:
    ```bash
@@ -53,7 +68,7 @@ A lightweight, native macOS menu bar app that displays real-time system metrics 
    ./SystemPulse
    ```
 
-### Option 2: Create an app bundle (optional)
+### Option 4: Create an app bundle (optional)
 
 If you want SystemPulse to appear as a proper macOS app:
 
@@ -90,7 +105,7 @@ If you want SystemPulse to appear as a proper macOS app:
    mv SystemPulse.app /Applications/
    ```
 
-### Option 3: Run with Automator (recommended)
+### Option 5: Run with Automator
 
 This method allows SystemPulse to run independently of Terminal, so it keeps running even after you close Terminal.
 
@@ -115,16 +130,9 @@ This method allows SystemPulse to run independently of Terminal, so it keeps run
 
 7. Double-click the saved Automator app to run SystemPulse
 
-**Tip**: You can now add this Automator app to your Login Items to start SystemPulse automatically at boot:
+**Tip:** You can add SystemPulse to your Login Items to start automatically at boot:
 1. Open **System Settings** > **General** > **Login Items**
 2. Click **+** and select your SystemPulse Automator app
-
-### Launch at login (alternative)
-
-If you created an app bundle (Option 2), you can add it directly to Login Items:
-
-1. Open **System Settings** > **General** > **Login Items**
-2. Click **+** and add SystemPulse.app
 
 ## Usage
 

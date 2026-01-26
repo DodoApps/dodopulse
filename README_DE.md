@@ -6,7 +6,7 @@ Eine leichte, native macOS-Menüleisten-App, die Echtzeit-Systemmetriken mit sch
 
 <img width="397" height="715" alt="image" src="https://github.com/user-attachments/assets/6868a0ac-1d01-45aa-84d7-8d21dc0daa6b" />
 
-![macOS](https://img.shields.io/badge/macOS-14.0%2B-blue)
+![macOS](https://img.shields.io/badge/macOS-12.0%2B-blue)
 ![Swift](https://img.shields.io/badge/Swift-5.9%2B-orange)
 ![Lizenz](https://img.shields.io/badge/Lizenz-MIT-green)
 
@@ -94,7 +94,7 @@ Wenn Sie möchten, dass SystemPulse als richtige macOS-App erscheint:
        <key>CFBundleVersion</key>
        <string>1.0</string>
        <key>LSMinimumSystemVersion</key>
-       <string>14.0</string>
+       <string>12.0</string>
        <key>LSUIElement</key>
        <true/>
    </dict>

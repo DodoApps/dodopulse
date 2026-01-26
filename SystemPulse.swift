@@ -947,6 +947,50 @@ class ContentView: NSView {
     let pad: CGFloat = 16
     let gap: CGFloat = 8
     var cardRects: [CardType: NSRect] = [:]
+    var hoveredCard: CardType? = nil
+    var trackingArea: NSTrackingArea?
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        if let existing = trackingArea {
+            removeTrackingArea(existing)
+        }
+        trackingArea = NSTrackingArea(
+            rect: bounds,
+            options: [.mouseMoved, .mouseEnteredAndExited, .activeAlways],
+            owner: self,
+            userInfo: nil
+        )
+        addTrackingArea(trackingArea!)
+    }
+
+    override func mouseMoved(with event: NSEvent) {
+        let loc = convert(event.locationInWindow, from: nil)
+        var newHovered: CardType? = nil
+        for (card, rect) in cardRects {
+            if rect.contains(loc) {
+                newHovered = card
+                break
+            }
+        }
+        if newHovered != hoveredCard {
+            hoveredCard = newHovered
+            if hoveredCard != nil {
+                NSCursor.pointingHand.set()
+            } else {
+                NSCursor.arrow.set()
+            }
+            needsDisplay = true
+        }
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        if hoveredCard != nil {
+            hoveredCard = nil
+            NSCursor.arrow.set()
+            needsDisplay = true
+        }
+    }
 
     override func mouseDown(with event: NSEvent) {
         let loc = convert(event.locationInWindow, from: nil)
@@ -986,7 +1030,7 @@ class ContentView: NSView {
         y -= cpuH
         let cpuRect = NSRect(x: pad, y: y, width: w, height: cpuH)
         cardRects[.cpu] = cpuRect
-        drawCardGlow(x: pad, y: y, w: w, h: cpuH, color: Theme.cpu, intensity: m.cpu / 100)
+        drawCardGlow(x: pad, y: y, w: w, h: cpuH, color: Theme.cpu, intensity: m.cpu / 100, isHovered: hoveredCard == .cpu)
         let cpuColor = m.cpu > 90 ? Theme.danger : (m.cpu > 70 ? Theme.warning : Theme.cpu)
         String(format: "%.1f%%", m.cpu).draw(at: NSPoint(x: pad + 14, y: y + cpuH - 36), withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 26, weight: .bold), .foregroundColor: cpuColor])
         L10n.cpu.draw(at: NSPoint(x: pad + 14, y: y + cpuH - 52), withAttributes: [.font: NSFont.systemFont(ofSize: 11, weight: .semibold), .foregroundColor: Theme.text2])
@@ -1012,7 +1056,7 @@ class ContentView: NSView {
         y -= memH
         let memRect = NSRect(x: pad, y: y, width: w, height: memH)
         cardRects[.memory] = memRect
-        drawCardGlow(x: pad, y: y, w: w, h: memH, color: Theme.mem, intensity: m.mem / 100)
+        drawCardGlow(x: pad, y: y, w: w, h: memH, color: Theme.mem, intensity: m.mem / 100, isHovered: hoveredCard == .memory)
         let memColor = m.mem > 90 ? Theme.danger : (m.mem > 75 ? Theme.warning : Theme.mem)
         String(format: "%.1f%%", m.mem).draw(at: NSPoint(x: pad + 14, y: y + memH - 36), withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 26, weight: .bold), .foregroundColor: memColor])
         L10n.memory.draw(at: NSPoint(x: pad + 14, y: y + memH - 52), withAttributes: [.font: NSFont.systemFont(ofSize: 11, weight: .semibold), .foregroundColor: Theme.text2])
@@ -1026,7 +1070,7 @@ class ContentView: NSView {
         y -= gpuH
         let gpuRect = NSRect(x: pad, y: y, width: w, height: gpuH)
         cardRects[.gpu] = gpuRect
-        drawCardGlow(x: pad, y: y, w: w, h: gpuH, color: Theme.gpu, intensity: m.gpu / 100)
+        drawCardGlow(x: pad, y: y, w: w, h: gpuH, color: Theme.gpu, intensity: m.gpu / 100, isHovered: hoveredCard == .gpu)
         String(format: "%.0f%%", m.gpu).draw(at: NSPoint(x: pad + 14, y: y + gpuH - 36), withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 26, weight: .bold), .foregroundColor: Theme.gpu])
         L10n.gpu.draw(at: NSPoint(x: pad + 14, y: y + gpuH - 52), withAttributes: [.font: NSFont.systemFont(ofSize: 11, weight: .semibold), .foregroundColor: Theme.text2])
         m.gpuName.replacingOccurrences(of: "Apple ", with: "").draw(at: NSPoint(x: pad + 14, y: y + 16), withAttributes: [.font: NSFont.systemFont(ofSize: 11, weight: .medium), .foregroundColor: Theme.text2])
@@ -1048,7 +1092,7 @@ class ContentView: NSView {
         y -= netH
         let netRect = NSRect(x: pad, y: y, width: w, height: netH)
         cardRects[.network] = netRect
-        drawCardGlow(x: pad, y: y, w: w, h: netH, color: Theme.net, intensity: min((m.netIn + m.netOut) / 10000000, 1.0))
+        drawCardGlow(x: pad, y: y, w: w, h: netH, color: Theme.net, intensity: min((m.netIn + m.netOut) / 10000000, 1.0), isHovered: hoveredCard == .network)
         L10n.network.draw(at: NSPoint(x: pad + 14, y: y + netH - 16), withAttributes: [.font: NSFont.systemFont(ofSize: 11, weight: .semibold), .foregroundColor: Theme.text2])
         "↓".draw(at: NSPoint(x: pad + 14, y: y + 56), withAttributes: [.font: NSFont.systemFont(ofSize: 18, weight: .bold), .foregroundColor: Theme.net])
         formatSpeed(m.netIn).draw(at: NSPoint(x: pad + 34, y: y + 58), withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 16, weight: .bold), .foregroundColor: Theme.net])
@@ -1069,7 +1113,7 @@ class ContentView: NSView {
         y -= diskH
         let diskRect = NSRect(x: pad, y: y, width: w, height: diskH)
         cardRects[.disk] = diskRect
-        drawCard(x: pad, y: y, w: w, h: diskH)
+        drawCard(x: pad, y: y, w: w, h: diskH, isHovered: hoveredCard == .disk)
         let diskColor = m.diskUsed > 90 ? Theme.danger : (m.diskUsed > 75 ? Theme.warning : Theme.disk)
         // Percentage at top
         String(format: "%.0f%%", m.diskUsed).draw(at: NSPoint(x: pad + 14, y: y + diskH - 30), withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 22, weight: .bold), .foregroundColor: diskColor])
@@ -1095,7 +1139,7 @@ class ContentView: NSView {
         y -= battH
         let battRect = NSRect(x: pad, y: y, width: w, height: battH)
         cardRects[.battery] = battRect
-        drawCard(x: pad, y: y, w: w, h: battH)
+        drawCard(x: pad, y: y, w: w, h: battH, isHovered: hoveredCard == .battery)
         if m.hasBatt {
             let battColor = m.battCharging ? Theme.accent : (m.battLevel < 20 ? Theme.danger : (m.battLevel < 40 ? Theme.warning : Theme.batt))
             // Percentage at top
@@ -1123,7 +1167,7 @@ class ContentView: NSView {
             y -= fanH
             let fanRect = NSRect(x: pad, y: y, width: w, height: fanH)
             cardRects[.fans] = fanRect
-            drawCard(x: pad, y: y, w: w, h: fanH)
+            drawCard(x: pad, y: y, w: w, h: fanH, isHovered: hoveredCard == .fans)
             L10n.fans.draw(at: NSPoint(x: pad + 14, y: y + fanH - 16), withAttributes: [.font: NSFont.systemFont(ofSize: 11, weight: .semibold), .foregroundColor: Theme.text2])
             for (i, rpm) in m.fanSpeed.enumerated() {
                 "\(L10n.fan) \(i + 1): \(rpm) RPM".draw(at: NSPoint(x: pad + 14 + CGFloat(i) * 150, y: y + 8), withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 13, weight: .bold), .foregroundColor: Theme.fan])
@@ -1136,7 +1180,7 @@ class ContentView: NSView {
         y -= sysH
         let sysRect = NSRect(x: pad, y: y, width: w, height: sysH)
         cardRects[.system] = sysRect
-        drawCard(x: pad, y: y, w: w, h: sysH)
+        drawCard(x: pad, y: y, w: w, h: sysH, isHovered: hoveredCard == .system)
         L10n.system.draw(at: NSPoint(x: pad + 14, y: y + sysH - 16), withAttributes: [.font: NSFont.systemFont(ofSize: 11, weight: .semibold), .foregroundColor: Theme.text2])
         String(format: "\(L10n.load): %.2f  %.2f  %.2f", m.loadAvg.0, m.loadAvg.1, m.loadAvg.2).draw(at: NSPoint(x: pad + 14, y: y + 50), withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 12, weight: .medium), .foregroundColor: Theme.system])
         "\(L10n.processes): \(m.processCount)".draw(at: NSPoint(x: pad + 220, y: y + 50), withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 12, weight: .medium), .foregroundColor: Theme.text2])
@@ -1159,12 +1203,22 @@ class ContentView: NSView {
         }
     }
 
-    func drawCard(x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat) {
-        let path = NSBezierPath(roundedRect: NSRect(x: x, y: y, width: w, height: h), xRadius: 12, yRadius: 12)
+    func drawCard(x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat, isHovered: Bool = false) {
+        let rect = NSRect(x: x, y: y, width: w, height: h)
+        let path = NSBezierPath(roundedRect: rect, xRadius: 12, yRadius: 12)
 
         // Draw gradient fill
         if let gradient = NSGradient(starting: Theme.cardGradientTop, ending: Theme.cardGradientBottom) {
             gradient.draw(in: path, angle: 90)  // 90 degrees = top to bottom
+        }
+
+        // Draw hover highlight
+        if isHovered {
+            let hoverColor = Theme.current == .dark
+                ? NSColor.white.withAlphaComponent(0.06)
+                : NSColor.black.withAlphaComponent(0.04)
+            hoverColor.setFill()
+            path.fill()
         }
 
         // Draw border
@@ -1172,37 +1226,12 @@ class ContentView: NSView {
         path.stroke()
     }
 
-    func drawHoverArrow(in rect: NSRect) {
-        // Draw a subtle highlight overlay
-        Theme.accent.withAlphaComponent(0.08).setFill()
-        NSBezierPath(roundedRect: rect, xRadius: 12, yRadius: 12).fill()
-
-        // Draw arrow on the right side
-        let arrowX = rect.maxX - 24
-        let arrowY = rect.midY
-
-        // Arrow background circle
-        Theme.accent.withAlphaComponent(0.2).setFill()
-        NSBezierPath(ovalIn: NSRect(x: arrowX - 10, y: arrowY - 10, width: 20, height: 20)).fill()
-
-        // Arrow chevron ">"
-        let arrow = NSBezierPath()
-        arrow.move(to: NSPoint(x: arrowX - 3, y: arrowY + 5))
-        arrow.line(to: NSPoint(x: arrowX + 3, y: arrowY))
-        arrow.line(to: NSPoint(x: arrowX - 3, y: arrowY - 5))
-        Theme.accent.setStroke()
-        arrow.lineWidth = 2
-        arrow.lineCapStyle = .round
-        arrow.lineJoinStyle = .round
-        arrow.stroke()
-    }
-
-    func drawCardGlow(x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat, color: NSColor, intensity: Double) {
+    func drawCardGlow(x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat, color: NSColor, intensity: Double, isHovered: Bool = false) {
         if intensity > 0.5 {
             color.withAlphaComponent((intensity - 0.5) * 0.25).setFill()
             NSBezierPath(roundedRect: NSRect(x: x - 2, y: y - 2, width: w + 4, height: h + 4), xRadius: 14, yRadius: 14).fill()
         }
-        drawCard(x: x, y: y, w: w, h: h)
+        drawCard(x: x, y: y, w: w, h: h, isHovered: isHovered)
     }
 
     func drawProgressBar(value: Double, x: CGFloat, y: CGFloat, w: CGFloat, h: CGFloat, color: NSColor) {
@@ -1267,6 +1296,7 @@ class BorderlessPanel: NSPanel {
         isOpaque = false
         backgroundColor = .clear
         hasShadow = true
+        acceptsMouseMovedEvents = true
 
         // Round corners
         if let contentView = contentView {
@@ -1498,6 +1528,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             contentView.metrics = monitor.metrics
             contentView.needsDisplay = true
             panel.orderFront(nil)
+            panel.makeKey()  // Make panel key to receive mouse events
 
             // Close when clicking outside
             eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in

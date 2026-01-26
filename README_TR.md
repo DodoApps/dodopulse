@@ -29,12 +29,29 @@ Gerçek zamanlı sistem metriklerini güzel mini grafiklerle gösteren hafif, ye
 
 ## Gereksinimler
 
-- macOS 14.0 (Sonoma) veya üzeri
+- macOS 12.0 (Monterey) veya üzeri
 - Apple Silicon veya Intel Mac
 
 ## Kurulum
 
-### Seçenek 1: Kaynaktan derleme
+> **Notarizasyon hakkında:** SystemPulse şu anda Apple tarafından notarize edilmemiştir. Notarizasyon, Apple'ın uygulamaları dağıtımdan önce kötü amaçlı yazılım için tarayan güvenlik sürecidir. Bu olmadan, macOS ilk açılışta bir uyarı gösterir. Kodu kendiniz inceleyebileceğiniz SystemPulse gibi açık kaynak uygulamalar için bunu atlamak güvenlidir. Notarizasyon gelecek bir sürüm için planlanmaktadır.
+
+### Seçenek 1: Homebrew (önerilen)
+
+```bash
+brew tap bluewave-labs/systempulse
+brew install --cask systempulse
+```
+
+İlk açılışta, uygulamaya sağ tıklayın → Aç → onaylayın. Veya çalıştırın: `xattr -cr /Applications/SystemPulse.app`
+
+### Seçenek 2: DMG İndir
+
+1. [Releases](https://github.com/bluewave-labs/systempulse/releases) sayfasından en son DMG'yi indirin
+2. DMG'yi açın ve SystemPulse'ı Uygulamalar'a sürükleyin
+3. İlk açılışta, sağ tıklayın → Aç → onaylayın (yukarıdaki notarizasyon notuna bakın)
+
+### Seçenek 3: Kaynaktan derleme
 
 1. Depoyu klonlayın:
    ```bash
@@ -52,7 +69,7 @@ Gerçek zamanlı sistem metriklerini güzel mini grafiklerle gösteren hafif, ye
    ./SystemPulse
    ```
 
-### Seçenek 2: Uygulama paketi oluşturma (isteğe bağlı)
+### Seçenek 4: Uygulama paketi oluşturma (isteğe bağlı)
 
 SystemPulse'ın düzgün bir macOS uygulaması olarak görünmesini istiyorsanız:
 
@@ -89,7 +106,7 @@ SystemPulse'ın düzgün bir macOS uygulaması olarak görünmesini istiyorsanı
    mv SystemPulse.app /Applications/
    ```
 
-### Seçenek 3: Automator ile çalıştırma (önerilen)
+### Seçenek 5: Automator ile çalıştırma
 
 Bu yöntem, SystemPulse'ın Terminal'den bağımsız çalışmasını sağlar, böylece Terminal'i kapattıktan sonra bile çalışmaya devam eder.
 
@@ -114,16 +131,9 @@ Bu yöntem, SystemPulse'ın Terminal'den bağımsız çalışmasını sağlar, b
 
 7. SystemPulse'ı çalıştırmak için kaydedilen Automator uygulamasına çift tıklayın
 
-**İpucu**: Artık bu Automator uygulamasını Giriş Öğelerinize ekleyerek SystemPulse'ı açılışta otomatik başlatabilirsiniz:
+**İpucu:** SystemPulse'ı açılışta otomatik başlatmak için Giriş Öğelerinize ekleyebilirsiniz:
 1. **Sistem Ayarları** > **Genel** > **Giriş Öğeleri**'ni açın
 2. **+**'ya tıklayın ve SystemPulse Automator uygulamanızı seçin
-
-### Girişte başlat (alternatif)
-
-Bir uygulama paketi oluşturduysanız (Seçenek 2), doğrudan Giriş Öğelerine ekleyebilirsiniz:
-
-1. **Sistem Ayarları** > **Genel** > **Giriş Öğeleri**'ni açın
-2. **+**'ya tıklayın ve SystemPulse.app'i ekleyin
 
 ## Kullanım
 

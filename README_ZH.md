@@ -29,12 +29,29 @@
 
 ## 系统要求
 
-- macOS 14.0（Sonoma）或更高版本
+- macOS 12.0（Monterey）或更高版本
 - Apple Silicon或Intel Mac
 
 ## 安装
 
-### 选项1：从源代码构建
+> **关于公证：** SystemPulse目前未经Apple公证。公证是Apple的安全流程，在分发前扫描应用程序是否存在恶意软件。没有公证，macOS会在首次启动时显示警告。对于像SystemPulse这样的开源应用程序，您可以自行检查代码，因此绕过此警告是安全的。公证计划在未来版本中实现。
+
+### 选项1：Homebrew（推荐）
+
+```bash
+brew tap bluewave-labs/systempulse
+brew install --cask systempulse
+```
+
+首次启动时，右键点击应用 → 打开 → 确认。或运行：`xattr -cr /Applications/SystemPulse.app`
+
+### 选项2：下载DMG
+
+1. 从[Releases](https://github.com/bluewave-labs/systempulse/releases)下载最新的DMG
+2. 打开DMG并将SystemPulse拖到应用程序文件夹
+3. 首次启动时，右键 → 打开 → 确认（参见上面关于公证的说明）
+
+### 选项3：从源代码构建
 
 1. 克隆仓库：
    ```bash
@@ -52,7 +69,7 @@
    ./SystemPulse
    ```
 
-### 选项2：创建应用程序包（可选）
+### 选项4：创建应用程序包（可选）
 
 如果您希望SystemPulse显示为正式的macOS应用程序：
 
@@ -89,7 +106,7 @@
    mv SystemPulse.app /Applications/
    ```
 
-### 选项3：使用Automator运行（推荐）
+### 选项5：使用Automator运行
 
 此方法允许SystemPulse独立于终端运行，因此即使关闭终端后它也会继续运行。
 
@@ -114,16 +131,9 @@
 
 7. 双击保存的Automator应用程序运行SystemPulse
 
-**提示**：您现在可以将此Automator应用程序添加到登录项，以便在启动时自动启动SystemPulse：
+**提示：** 您可以将SystemPulse添加到登录项，以便在启动时自动启动：
 1. 打开**系统设置** > **通用** > **登录项**
 2. 点击**+**并选择您的SystemPulse Automator应用程序
-
-### 登录时启动（替代方法）
-
-如果您创建了应用程序包（选项2），可以直接将其添加到登录项：
-
-1. 打开**系统设置** > **通用** > **登录项**
-2. 点击**+**并添加SystemPulse.app
 
 ## 使用方法
 

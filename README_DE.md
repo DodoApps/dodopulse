@@ -29,12 +29,29 @@ Eine leichte, native macOS-Menüleisten-App, die Echtzeit-Systemmetriken mit sch
 
 ## Anforderungen
 
-- macOS 14.0 (Sonoma) oder höher
+- macOS 12.0 (Monterey) oder höher
 - Apple Silicon oder Intel Mac
 
 ## Installation
 
-### Option 1: Aus Quellcode erstellen
+> **Über Notarisierung:** SystemPulse ist derzeit nicht von Apple notarisiert. Notarisierung ist Apples Sicherheitsprozess, der Apps vor der Verteilung auf Malware überprüft. Ohne sie zeigt macOS beim ersten Start eine Warnung an. Bei Open-Source-Apps wie SystemPulse, wo Sie den Code selbst überprüfen können, ist es sicher, diese zu umgehen. Notarisierung ist für eine zukünftige Version geplant.
+
+### Option 1: Homebrew (empfohlen)
+
+```bash
+brew tap bluewave-labs/systempulse
+brew install --cask systempulse
+```
+
+Beim ersten Start: Rechtsklick auf die App → Öffnen → bestätigen. Oder ausführen: `xattr -cr /Applications/SystemPulse.app`
+
+### Option 2: DMG herunterladen
+
+1. Laden Sie die neueste DMG von [Releases](https://github.com/bluewave-labs/systempulse/releases) herunter
+2. Öffnen Sie die DMG und ziehen Sie SystemPulse in Programme
+3. Beim ersten Start: Rechtsklick → Öffnen → bestätigen (siehe Hinweis zur Notarisierung oben)
+
+### Option 3: Aus Quellcode erstellen
 
 1. Repository klonen:
    ```bash
@@ -52,7 +69,7 @@ Eine leichte, native macOS-Menüleisten-App, die Echtzeit-Systemmetriken mit sch
    ./SystemPulse
    ```
 
-### Option 2: App-Bundle erstellen (optional)
+### Option 4: App-Bundle erstellen (optional)
 
 Wenn Sie möchten, dass SystemPulse als richtige macOS-App erscheint:
 
@@ -89,7 +106,7 @@ Wenn Sie möchten, dass SystemPulse als richtige macOS-App erscheint:
    mv SystemPulse.app /Applications/
    ```
 
-### Option 3: Mit Automator ausführen (empfohlen)
+### Option 5: Mit Automator ausführen
 
 Diese Methode ermöglicht es SystemPulse, unabhängig vom Terminal zu laufen, sodass es auch nach dem Schließen des Terminals weiterläuft.
 
@@ -114,16 +131,9 @@ Diese Methode ermöglicht es SystemPulse, unabhängig vom Terminal zu laufen, so
 
 7. Doppelklicken Sie auf die gespeicherte Automator-App, um SystemPulse auszuführen
 
-**Tipp**: Sie können diese Automator-App jetzt zu Ihren Anmeldeobjekten hinzufügen, um SystemPulse automatisch beim Hochfahren zu starten:
+**Tipp:** Sie können SystemPulse zu Ihren Anmeldeobjekten hinzufügen, um es automatisch beim Hochfahren zu starten:
 1. Öffnen Sie **Systemeinstellungen** > **Allgemein** > **Anmeldeobjekte**
 2. Klicken Sie auf **+** und wählen Sie Ihre SystemPulse Automator-App
-
-### Beim Anmelden starten (Alternative)
-
-Wenn Sie ein App-Bundle erstellt haben (Option 2), können Sie es direkt zu den Anmeldeobjekten hinzufügen:
-
-1. Öffnen Sie **Systemeinstellungen** > **Allgemein** > **Anmeldeobjekte**
-2. Klicken Sie auf **+** und fügen Sie SystemPulse.app hinzu
 
 ## Verwendung
 

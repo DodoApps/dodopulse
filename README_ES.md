@@ -29,12 +29,29 @@ Una aplicación ligera y nativa para la barra de menús de macOS que muestra mé
 
 ## Requisitos
 
-- macOS 14.0 (Sonoma) o posterior
+- macOS 12.0 (Monterey) o posterior
 - Mac con Apple Silicon o Intel
 
 ## Instalación
 
-### Opción 1: Compilar desde el código fuente
+> **Sobre la notarización:** SystemPulse actualmente no está notarizado por Apple. La notarización es el proceso de seguridad de Apple que escanea las aplicaciones en busca de malware antes de su distribución. Sin ella, macOS muestra una advertencia en el primer inicio. Es seguro omitir esto para aplicaciones de código abierto como SystemPulse donde puedes inspeccionar el código tú mismo. La notarización está planificada para una versión futura.
+
+### Opción 1: Homebrew (recomendado)
+
+```bash
+brew tap bluewave-labs/systempulse
+brew install --cask systempulse
+```
+
+En el primer inicio, haz clic derecho en la app → Abrir → confirmar. O ejecuta: `xattr -cr /Applications/SystemPulse.app`
+
+### Opción 2: Descargar DMG
+
+1. Descarga el último DMG desde [Releases](https://github.com/bluewave-labs/systempulse/releases)
+2. Abre el DMG y arrastra SystemPulse a Aplicaciones
+3. En el primer inicio, clic derecho → Abrir → confirmar (ver nota sobre notarización arriba)
+
+### Opción 3: Compilar desde el código fuente
 
 1. Clonar el repositorio:
    ```bash
@@ -52,7 +69,7 @@ Una aplicación ligera y nativa para la barra de menús de macOS que muestra mé
    ./SystemPulse
    ```
 
-### Opción 2: Crear un paquete de aplicación (opcional)
+### Opción 4: Crear un paquete de aplicación (opcional)
 
 Si quieres que SystemPulse aparezca como una aplicación macOS propiamente dicha:
 
@@ -89,7 +106,7 @@ Si quieres que SystemPulse aparezca como una aplicación macOS propiamente dicha
    mv SystemPulse.app /Applications/
    ```
 
-### Opción 3: Ejecutar con Automator (recomendado)
+### Opción 5: Ejecutar con Automator
 
 Este método permite que SystemPulse se ejecute independientemente de la Terminal, por lo que sigue funcionando incluso después de cerrar la Terminal.
 
@@ -114,16 +131,9 @@ Este método permite que SystemPulse se ejecute independientemente de la Termina
 
 7. Haz doble clic en la aplicación de Automator guardada para ejecutar SystemPulse
 
-**Consejo**: Ahora puedes agregar esta aplicación de Automator a tus Ítems de inicio de sesión para iniciar SystemPulse automáticamente al arrancar:
+**Consejo:** Puedes agregar SystemPulse a tus Ítems de inicio de sesión para iniciarlo automáticamente al arrancar:
 1. Abre **Configuración del Sistema** > **General** > **Ítems de inicio de sesión**
 2. Haz clic en **+** y selecciona tu aplicación de Automator SystemPulse
-
-### Iniciar al iniciar sesión (alternativa)
-
-Si creaste un paquete de aplicación (Opción 2), puedes agregarlo directamente a los Ítems de inicio de sesión:
-
-1. Abre **Configuración del Sistema** > **General** > **Ítems de inicio de sesión**
-2. Haz clic en **+** y agrega SystemPulse.app
 
 ## Uso
 

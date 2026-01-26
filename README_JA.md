@@ -29,12 +29,29 @@
 
 ## 要件
 
-- macOS 14.0（Sonoma）以降
+- macOS 12.0（Monterey）以降
 - Apple SiliconまたはIntel Mac
 
 ## インストール
 
-### オプション1：ソースからビルド
+> **公証について：** SystemPulseは現在Appleによって公証されていません。公証とは、配布前にアプリをマルウェアスキャンするAppleのセキュリティプロセスです。これがないと、macOSは初回起動時に警告を表示します。SystemPulseのようなオープンソースアプリでは、コードを自分で確認できるため、これをバイパスしても安全です。公証は将来のリリースで予定されています。
+
+### オプション1：Homebrew（推奨）
+
+```bash
+brew tap bluewave-labs/systempulse
+brew install --cask systempulse
+```
+
+初回起動時、アプリを右クリック → 開く → 確認。または実行：`xattr -cr /Applications/SystemPulse.app`
+
+### オプション2：DMGをダウンロード
+
+1. [Releases](https://github.com/bluewave-labs/systempulse/releases)から最新のDMGをダウンロード
+2. DMGを開き、SystemPulseをアプリケーションにドラッグ
+3. 初回起動時、右クリック → 開く → 確認（上記の公証に関する注意を参照）
+
+### オプション3：ソースからビルド
 
 1. リポジトリをクローン：
    ```bash
@@ -52,7 +69,7 @@
    ./SystemPulse
    ```
 
-### オプション2：アプリバンドルを作成（オプション）
+### オプション4：アプリバンドルを作成（オプション）
 
 SystemPulseを正式なmacOSアプリとして表示したい場合：
 
@@ -89,7 +106,7 @@ SystemPulseを正式なmacOSアプリとして表示したい場合：
    mv SystemPulse.app /Applications/
    ```
 
-### オプション3：Automatorで実行（推奨）
+### オプション5：Automatorで実行
 
 この方法により、SystemPulseはターミナルから独立して実行されるため、ターミナルを閉じた後も動作し続けます。
 
@@ -114,16 +131,9 @@ SystemPulseを正式なmacOSアプリとして表示したい場合：
 
 7. 保存したAutomatorアプリをダブルクリックしてSystemPulseを実行
 
-**ヒント**：このAutomatorアプリをログイン項目に追加して、起動時にSystemPulseを自動的に開始できます：
+**ヒント：** SystemPulseをログイン項目に追加して、起動時に自動的に開始できます：
 1. **システム設定** > **一般** > **ログイン項目**を開く
 2. **+**をクリックし、SystemPulse Automatorアプリを選択
-
-### ログイン時に起動（代替方法）
-
-アプリバンドルを作成した場合（オプション2）、ログイン項目に直接追加できます：
-
-1. **システム設定** > **一般** > **ログイン項目**を開く
-2. **+**をクリックし、SystemPulse.appを追加
 
 ## 使用方法
 

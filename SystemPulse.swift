@@ -532,6 +532,25 @@ class Metrics {
     var localIP: String = "—", externalIP: String = "Fetching..."
     var netHistory: [Double] = []
 
+    // Multi-interface support
+    class NetworkInterface {
+        var name: String
+        var ip: String = "—"
+        var netIn: Double = 0
+        var netOut: Double = 0
+        var totalIn: UInt64 = 0
+        var totalOut: UInt64 = 0
+        var history: [Double] = []
+        var prevIn: UInt64 = 0
+        var prevOut: UInt64 = 0
+        
+        init(name: String) { self.name = name }
+    }
+    
+    var interfaces: [String: NetworkInterface] = [:]
+    var sortedInterfaces: [NetworkInterface] = []
+    var selectedInterfaceIndex: Int = 0
+
     var diskUsed: Double = 0, diskFree: UInt64 = 0, diskTotal: UInt64 = 0, diskName: String = "Macintosh HD"
     var ssdHealthPercent: Int = -1  // -1 means not available
 
@@ -582,7 +601,6 @@ class Monitor {
         metrics.cpuHistory.append(metrics.cpu); if metrics.cpuHistory.count > 60 { metrics.cpuHistory.removeFirst() }
         metrics.memHistory.append(metrics.mem); if metrics.memHistory.count > 60 { metrics.memHistory.removeFirst() }
         metrics.gpuHistory.append(metrics.gpu); if metrics.gpuHistory.count > 60 { metrics.gpuHistory.removeFirst() }
-        metrics.netHistory.append(metrics.netIn + metrics.netOut); if metrics.netHistory.count > 60 { metrics.netHistory.removeFirst() }
     }
 
     private func updateCPU() {
@@ -633,30 +651,77 @@ class Monitor {
         var ifaddr: UnsafeMutablePointer<ifaddrs>?
         guard getifaddrs(&ifaddr) == 0, let first = ifaddr else { return }
         defer { freeifaddrs(ifaddr) }
-        var totalIn: UInt64 = 0, totalOut: UInt64 = 0, cur = first
+        
+        var activeNames = Set<String>()
+        var cur = first
         while true {
-            let iface = cur.pointee; let name = String(cString: iface.ifa_name)
-            if iface.ifa_addr.pointee.sa_family == UInt8(AF_LINK), name != "lo0", let data = iface.ifa_data?.assumingMemoryBound(to: if_data.self) {
-                totalIn += UInt64(data.pointee.ifi_ibytes); totalOut += UInt64(data.pointee.ifi_obytes)
+            let iface = cur.pointee
+            let name = String(cString: iface.ifa_name)
+            
+            // Allow all interfaces including lo0
+            activeNames.insert(name)
+            
+            if metrics.interfaces[name] == nil {
+                metrics.interfaces[name] = Metrics.NetworkInterface(name: name)
+                metrics.sortedInterfaces = metrics.interfaces.values.sorted { $0.name < $1.name }
             }
-            if iface.ifa_addr.pointee.sa_family == UInt8(AF_INET), name != "lo0" {
-                var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-                getnameinfo(iface.ifa_addr, socklen_t(iface.ifa_addr.pointee.sa_len), &hostname, socklen_t(hostname.count), nil, 0, NI_NUMERICHOST)
-                let ip = String(cString: hostname)
-                if !ip.isEmpty && !ip.hasPrefix("127.") { metrics.localIP = ip }
+            
+            if let netIf = metrics.interfaces[name] {
+                if iface.ifa_addr.pointee.sa_family == UInt8(AF_LINK), let data = iface.ifa_data?.assumingMemoryBound(to: if_data.self) {
+                    netIf.totalIn = UInt64(data.pointee.ifi_ibytes)
+                    netIf.totalOut = UInt64(data.pointee.ifi_obytes)
+                }
+                
+                if iface.ifa_addr.pointee.sa_family == UInt8(AF_INET) {
+                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                    getnameinfo(iface.ifa_addr, socklen_t(iface.ifa_addr.pointee.sa_len), &hostname, socklen_t(hostname.count), nil, 0, NI_NUMERICHOST)
+                    let ip = String(cString: hostname)
+                    if !ip.isEmpty { netIf.ip = ip }
+                }
             }
+            
             guard let next = iface.ifa_next else { break }; cur = next
         }
-        metrics.netTotalIn = totalIn; metrics.netTotalOut = totalOut
+        
         let now = Date()
         if let pt = metrics.prevTime {
             let dt = now.timeIntervalSince(pt)
             if dt > 0 {
-                metrics.netIn = Double(totalIn > metrics.prevNetIn ? totalIn - metrics.prevNetIn : 0) / dt
-                metrics.netOut = Double(totalOut > metrics.prevNetOut ? totalOut - metrics.prevNetOut : 0) / dt
+                for netIf in metrics.interfaces.values {
+                    if netIf.prevIn > 0 {
+                        let dIn = netIf.totalIn >= netIf.prevIn ? netIf.totalIn - netIf.prevIn : 0
+                        let dOut = netIf.totalOut >= netIf.prevOut ? netIf.totalOut - netIf.prevOut : 0
+                        netIf.netIn = Double(dIn) / dt
+                        netIf.netOut = Double(dOut) / dt
+                    }
+                    netIf.prevIn = netIf.totalIn
+                    netIf.prevOut = netIf.totalOut
+                    
+                    netIf.history.append(netIf.netIn + netIf.netOut)
+                    if netIf.history.count > 60 { netIf.history.removeFirst() }
+                }
             }
+        } else {
+             for netIf in metrics.interfaces.values {
+                netIf.prevIn = netIf.totalIn
+                netIf.prevOut = netIf.totalOut
+             }
         }
-        metrics.prevNetIn = totalIn; metrics.prevNetOut = totalOut; metrics.prevTime = now
+        metrics.prevTime = now
+        
+        // Sync to legacy properties for selected interface
+        if !metrics.sortedInterfaces.isEmpty {
+            if metrics.selectedInterfaceIndex >= metrics.sortedInterfaces.count {
+                metrics.selectedInterfaceIndex = 0
+            }
+            let selected = metrics.sortedInterfaces[metrics.selectedInterfaceIndex]
+            metrics.netIn = selected.netIn
+            metrics.netOut = selected.netOut
+            metrics.netTotalIn = selected.totalIn
+            metrics.netTotalOut = selected.totalOut
+            metrics.localIP = selected.ip
+            metrics.netHistory = selected.history
+        }
     }
 
     private func fetchExternalIP() {
@@ -1001,6 +1066,24 @@ class ContentView: NSView {
         let loc = convert(event.locationInWindow, from: nil)
         for (card, rect) in cardRects {
             if rect.contains(loc) {
+                if card == .network, let m = metrics, m.sortedInterfaces.count > 1 {
+                    let topY = rect.maxY - 25
+                    if loc.y > topY && loc.x > rect.maxX - 60 {
+                        if loc.x < rect.maxX - 30 {
+                             m.selectedInterfaceIndex = (m.selectedInterfaceIndex - 1 + m.sortedInterfaces.count) % m.sortedInterfaces.count
+                        } else {
+                             m.selectedInterfaceIndex = (m.selectedInterfaceIndex + 1) % m.sortedInterfaces.count
+                        }
+                        if m.selectedInterfaceIndex < m.sortedInterfaces.count {
+                             let sel = m.sortedInterfaces[m.selectedInterfaceIndex]
+                             m.netIn = sel.netIn; m.netOut = sel.netOut
+                             m.netTotalIn = sel.totalIn; m.netTotalOut = sel.totalOut
+                             m.localIP = sel.ip; m.netHistory = sel.history
+                        }
+                        needsDisplay = true
+                        return
+                    }
+                }
                 card.open()
                 return
             }
@@ -1098,7 +1181,20 @@ class ContentView: NSView {
         let netRect = NSRect(x: pad, y: y, width: w, height: netH)
         cardRects[.network] = netRect
         drawCardGlow(x: pad, y: y, w: w, h: netH, color: Theme.net, intensity: min((m.netIn + m.netOut) / 10000000, 1.0), isHovered: hoveredCard == .network)
-        L10n.network.draw(at: NSPoint(x: pad + 14, y: y + netH - 16), withAttributes: [.font: NSFont.systemFont(ofSize: 11, weight: .semibold), .foregroundColor: Theme.text2])
+        
+        // Interface Name and Navigation
+        let ifaceName = !m.sortedInterfaces.isEmpty && m.selectedInterfaceIndex < m.sortedInterfaces.count 
+                        ? m.sortedInterfaces[m.selectedInterfaceIndex].name 
+                        : ""
+        let title = ifaceName.isEmpty ? L10n.network : "\(L10n.network) (\(ifaceName))"
+        title.draw(at: NSPoint(x: pad + 14, y: y + netH - 16), withAttributes: [.font: NSFont.systemFont(ofSize: 11, weight: .semibold), .foregroundColor: Theme.text2])
+        
+        // Draw Arrows if multiple interfaces
+        if m.sortedInterfaces.count > 1 {
+             let arrowColor = hoveredCard == .network ? Theme.text : Theme.text2
+             "<".draw(at: NSPoint(x: pad + w - 45, y: y + netH - 18), withAttributes: [.font: NSFont.boldSystemFont(ofSize: 13), .foregroundColor: arrowColor])
+             ">".draw(at: NSPoint(x: pad + w - 20, y: y + netH - 18), withAttributes: [.font: NSFont.boldSystemFont(ofSize: 13), .foregroundColor: arrowColor])
+        }
         "↓".draw(at: NSPoint(x: pad + 14, y: y + 56), withAttributes: [.font: NSFont.systemFont(ofSize: 18, weight: .bold), .foregroundColor: Theme.net])
         formatSpeed(m.netIn).draw(at: NSPoint(x: pad + 34, y: y + 58), withAttributes: [.font: NSFont.monospacedSystemFont(ofSize: 16, weight: .bold), .foregroundColor: Theme.net])
         "↑".draw(at: NSPoint(x: pad + 14, y: y + 32), withAttributes: [.font: NSFont.systemFont(ofSize: 18, weight: .bold), .foregroundColor: Theme.netUp])

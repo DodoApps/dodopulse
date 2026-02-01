@@ -195,6 +195,23 @@ DodoPulse permite agregar nuevos idiomas fácilmente. Para agregar un nuevo idio
 
 Licencia MIT - ver [LICENSE](LICENSE) para más detalles.
 
+## Soporte KDE Plasma
+
+¡DodoPulse también está disponible como **widget de KDE Plasma** para usuarios de Linux!
+
+Ofrece las mismas capacidades de monitoreo del sistema con hermosos gráficos sparkline:
+- Monitoreo de CPU, Memoria, GPU con gráficos en tiempo real
+- Velocidades de red con totales de sesión
+- Uso de disco con detección de unidades externas
+- Estado de batería e información del sistema
+
+**Instalación:**
+```bash
+kpackagetool6 -t Plasma/Applet -i dodopulse.plasmoid
+```
+
+Para más detalles, ver [KDE/README.md](KDE/README.md)
+
 ## Agradecimientos
 
 Desarrollado con Swift y AppKit para rendimiento nativo de macOS.

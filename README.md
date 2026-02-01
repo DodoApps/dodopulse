@@ -196,6 +196,23 @@ DodoPulse supports adding new languages easily. To add a new language:
 
 MIT License - see [LICENSE](LICENSE) for details.
 
+## KDE Plasma Support
+
+DodoPulse is also available as a **KDE Plasma widget** for Linux users!
+
+Features the same system monitoring capabilities with beautiful sparkline graphs:
+- CPU, Memory, GPU monitoring with real-time graphs
+- Network speeds with session totals
+- Disk usage with external drive detection
+- Battery status and system info
+
+**Installation:**
+```bash
+kpackagetool6 -t Plasma/Applet -i dodopulse.plasmoid
+```
+
+For more details, see [KDE/README.md](KDE/README.md)
+
 ## Acknowledgments
 
 Built with Swift and AppKit for native macOS performance.

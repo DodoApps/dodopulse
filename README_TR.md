@@ -212,6 +212,21 @@ kpackagetool6 -t Plasma/Applet -i dodopulse.plasmoid
 
 Daha fazla detay için bkz. [KDE/README_TR.md](KDE/README_TR.md)
 
+## GNOME Shell Desteği
+
+DodoPulse artık bir **GNOME Shell eklentisi** olarak da mevcut (GNOME 43 → 51):
+- Üst çubukta işlemci ve bellek kullanımı, isteğe bağlı ağ hızı
+- Gerçek zamanlı grafiklerle İşlemci, Bellek, GPU ve Ağ kartları
+- Harici disk algılama ile disk kullanımı, pil durumu ve sistem bilgisi
+
+```bash
+cd GNOME
+./install.sh
+gnome-extensions enable dodopulse@dodoapps.com
+```
+
+Daha fazla detay için bkz. [GNOME/README_TR.md](GNOME/README_TR.md)
+
 ## Teşekkürler
 
 Yerli macOS performansı için Swift ve AppKit ile geliştirilmiştir.

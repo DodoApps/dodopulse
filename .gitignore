@@ -39,3 +39,6 @@ SystemPulse
 .env.*
 credentials.*
 secrets.*
+
+# GNOME extension build output
+GNOME/dist/

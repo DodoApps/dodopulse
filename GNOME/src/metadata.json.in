@@ -1,0 +1,9 @@
+{
+  "uuid": "dodopulse@dodoapps.com",
+  "name": "DodoPulse",
+  "description": "Lightweight system monitor for the top bar with beautiful mini graphs: CPU, memory, GPU, network, disk, battery and system info.",
+  "url": "https://github.com/dodoapps/dodopulse",
+  "settings-schema": "org.gnome.shell.extensions.dodopulse",
+  "shell-version": @SHELL_VERSIONS@,
+  "version": 1
+}

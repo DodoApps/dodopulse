@@ -213,6 +213,21 @@ kpackagetool6 -t Plasma/Applet -i dodopulse.plasmoid
 
 For more details, see [KDE/README.md](KDE/README.md)
 
+## GNOME Shell Support
+
+DodoPulse is also available as a **GNOME Shell extension** (GNOME 43 → 51):
+- CPU and memory usage in the top bar, optional network speed
+- CPU, Memory, GPU, Network cards with real-time graphs
+- Disk usage with external drive detection, battery status and system info
+
+```bash
+cd GNOME
+./install.sh
+gnome-extensions enable dodopulse@dodoapps.com
+```
+
+For more details, see [GNOME/README.md](GNOME/README.md)
+
 ## Acknowledgments
 
 Built with Swift and AppKit for native macOS performance.

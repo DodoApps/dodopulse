@@ -1,0 +1,116 @@
+/* DodoPulse GNOME Shell extension */
+
+.dodopulse-panel {
+    spacing: 4px;
+}
+
+.dodopulse-panel-label {
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.dodopulse-panel-sep {
+    width: 4px;
+}
+
+.dodopulse-menu-item,
+.dodopulse-menu-item:hover,
+.dodopulse-menu-item:focus,
+.dodopulse-menu-item:active {
+    background-color: transparent;
+    padding: 0;
+}
+
+.dodopulse-popup {
+    min-width: 360px;
+    padding: 4px 6px;
+    spacing: 8px;
+}
+
+.dodopulse-header {
+    padding: 0 2px 2px 2px;
+}
+
+.dodopulse-title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.dodopulse-uptime {
+    font-size: 11px;
+    font-weight: bold;
+    opacity: 204;
+}
+
+.dodopulse-card {
+    border-radius: 10px;
+    border-width: 1px;
+    border-style: solid;
+    padding: 10px;
+    spacing: 8px;
+}
+
+.dodopulse-card-small {
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.dodopulse-card:hover {
+    border-width: 1px;
+}
+
+.dodopulse-value {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.dodopulse-value-medium {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.dodopulse-value-small {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.dodopulse-card-title {
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.dodopulse-subtitle {
+    font-size: 10px;
+    font-weight: bold;
+    opacity: 178;
+}
+
+.dodopulse-small {
+    font-size: 9px;
+    font-weight: bold;
+    opacity: 178;
+}
+
+.dodopulse-speed {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.dodopulse-badge {
+    border-radius: 5px;
+    padding: 1px 5px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.dodopulse-footer {
+    padding-top: 2px;
+}
+
+.dodopulse-footer-button {
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: bold;
+}

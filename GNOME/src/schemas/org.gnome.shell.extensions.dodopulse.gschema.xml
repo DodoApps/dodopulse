@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="dodopulse">
+  <enum id="org.gnome.shell.extensions.dodopulse.position">
+    <value value="0" nick="left"/>
+    <value value="1" nick="center"/>
+    <value value="2" nick="right"/>
+  </enum>
+
+  <schema id="org.gnome.shell.extensions.dodopulse" path="/org/gnome/shell/extensions/dodopulse/">
+    <key name="update-interval" type="i">
+      <range min="500" max="10000"/>
+      <default>1000</default>
+      <summary>Update interval in milliseconds</summary>
+    </key>
+    <key name="panel-position" enum="org.gnome.shell.extensions.dodopulse.position">
+      <default>'right'</default>
+      <summary>Position of the indicator in the top bar</summary>
+    </key>
+
+    <key name="panel-show-cpu" type="b">
+      <default>true</default>
+      <summary>Show CPU usage in the top bar</summary>
+    </key>
+    <key name="panel-show-memory" type="b">
+      <default>true</default>
+      <summary>Show memory usage in the top bar</summary>
+    </key>
+    <key name="panel-show-network" type="b">
+      <default>false</default>
+      <summary>Show network speed in the top bar</summary>
+    </key>
+
+    <key name="show-cpu" type="b">
+      <default>true</default>
+      <summary>Show CPU section</summary>
+    </key>
+    <key name="show-memory" type="b">
+      <default>true</default>
+      <summary>Show Memory section</summary>
+    </key>
+    <key name="show-gpu" type="b">
+      <default>true</default>
+      <summary>Show GPU section</summary>
+    </key>
+    <key name="show-network" type="b">
+      <default>true</default>
+      <summary>Show Network section</summary>
+    </key>
+    <key name="show-disk" type="b">
+      <default>true</default>
+      <summary>Show Disk section</summary>
+    </key>
+    <key name="show-battery" type="b">
+      <default>true</default>
+      <summary>Show Battery section (only when a battery is present)</summary>
+    </key>
+    <key name="show-system" type="b">
+      <default>true</default>
+      <summary>Show System section</summary>
+    </key>
+    <key name="show-temperature" type="b">
+      <default>true</default>
+      <summary>Show temperature readings</summary>
+    </key>
+    <key name="show-public-ip" type="b">
+      <default>true</default>
+      <summary>Fetch and show the public IP address (queries api.ipify.org)</summary>
+    </key>
+  </schema>
+</schemalist>
